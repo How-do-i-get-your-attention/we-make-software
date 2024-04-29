@@ -323,9 +323,8 @@ Servers:
 
 Languages:
 
-    - da:Danish
-
-    - en:English
+    da:Danish
+    en:English
 
 Companies:
     
@@ -342,7 +341,6 @@ Standards:
 Regulations:
 
     Danish legislation
-
     General Data Protection Regulation
 
 Countries Or CountryAndStates:
