@@ -1,3 +1,5 @@
+#define StartDLL 
+#define StopDLL
 #define SystemApplicationProgrammingInterface
 #include ".h"
 void System::Task::_Start()
@@ -59,27 +61,91 @@ System::Task::~Task()
     delete Counter;
     delete Mutex;
 }
+std::vector<std::wstring> Upgrades;
 HMODULE System::Libraries::Get(std::wstring name)
 {
-    for (const auto& module : System::Libraries::Modules)
-        if (module.first == name)
-            return module.second;
-    return nullptr;
+    while (true)
+    {
+        if (std::find(Upgrades.begin(), Upgrades.end(), name) == Upgrades.end())break;
+        Sleep(100);
+    }
+    while (true)
+    {
+        for (const auto& module : System::Libraries::Modules)
+            if (module.first == name)
+                return module.second;
+    }
+}
+void System::Libraries::Delete(std::wstring name)
+{
+    if (HMODULE get = Get(name)) {
+        if (auto StopFunc = (void (*)(void))GetProcAddress(get, "Stop"))StopFunc();
+        FreeLibrary(get);
+        System::Libraries::Modules.erase(std::remove_if(System::Libraries::Modules.begin(), System::Libraries::Modules.end(), [&](std::pair<std::wstring, HMODULE>& pair) { return pair.first == name; }), System::Libraries::Modules.end());
+        wchar_t buffer[MAX_PATH];
+        (void)GetModuleFileNameW(NULL, buffer, MAX_PATH);
+        std::filesystem::path exePath = std::filesystem::path(buffer).parent_path();
+        std::filesystem::path workerPath = exePath / "worker";
+        std::filesystem::path destination = workerPath / name;
+        std::filesystem::remove(exePath / name);
+        std::filesystem::remove(workerPath / name);
+        std::vector<std::string> extensions = { ".lib", ".pdb", ".exp" };
+        for (const auto& ext : extensions) {
+            std::filesystem::path filePath = exePath / name;
+            filePath.replace_extension(ext);
+            std::filesystem::remove(filePath);
+            std::filesystem::remove(workerPath / filePath.filename());
+        }
+    }
+}
+std::mutex UpgradeMutex;
+void System::Libraries::Update(std::wstring name)
+{
+    std::lock_guard<std::mutex> lock(UpgradeMutex);
+    Upgrades.push_back(name);
+    if (HMODULE get = Get(name)) {
+        if (auto UpdatingFunc = (void (*)(void))GetProcAddress(get, "Updating"))UpdatingFunc();
+        FreeLibrary(get);
+        System::Libraries::Modules.erase(std::remove_if(System::Libraries::Modules.begin(), System::Libraries::Modules.end(), [&](std::pair<std::wstring, HMODULE>& pair) { return pair.first == name; }), System::Libraries::Modules.end());
+    }
+    wchar_t buffer[MAX_PATH];
+    (void)GetModuleFileNameW(NULL, buffer, MAX_PATH);
+    std::filesystem::path exePath = std::filesystem::path(buffer).parent_path();
+    std::filesystem::path workerPath = exePath / "worker";
+    std::filesystem::path destination = workerPath / name;
+    std::filesystem::copy(exePath / name, destination, std::filesystem::copy_options::overwrite_existing);
+    std::vector<std::string> extensions = { ".lib", ".pdb", ".exp" };
+    for (const auto& ext : extensions) {
+        std::filesystem::path filePath = exePath / name;
+        filePath.replace_extension(ext);
+        if (std::filesystem::exists(filePath)) {
+            std::filesystem::path fileDestination = workerPath / filePath.filename();
+            std::filesystem::copy(filePath, fileDestination, std::filesystem::copy_options::overwrite_existing);
+        }
+    }
+    if (HMODULE hModule = LoadLibraryW(destination.c_str())) {
+        if (System::Status* status = (System::Status*)GetProcAddress(hModule, "Status")) {
+            if (auto StartFunc = (void (*)())GetProcAddress(hModule, "Start"))
+                std::thread([StartFunc] { StartFunc(); }).detach();
+            System::Libraries::Modules.push_back(std::make_pair(destination.filename().wstring(), hModule));
+            Upgrades.erase(std::remove(Upgrades.begin(), Upgrades.end(), name), Upgrades.end());
+            return;
+        }
+        FreeLibrary(hModule);
+    }
 }
 bool System::Libraries::Wait(std::wstring name, System::Status status)
 {
     while (auto get = Get(name)) {
-        if (System::Status* FileStatus = (System::Status*)GetProcAddress(get, "Status"); !FileStatus || *FileStatus == status)
-            return !FileStatus ? false : true;
+        if (System::Status* FileStatus = (System::Status*)GetProcAddress(get, "Status");  *FileStatus == status)
+            return  true;
         Sleep(100);
-        continue;
     }
-    return false;
 }
 bool System::Libraries::WaitForModule(std::wstring name)
 {
     while (true) {
-        for (const auto& module : System::Libraries::Modules)
+        for (auto& module : System::Libraries::Modules)
             if (module.first == name)
                 return true;
         Sleep(100);
@@ -127,14 +193,13 @@ void Main() {
         std::filesystem::remove_all(workerPath);
     std::filesystem::create_directory(workerPath);
     SetDllDirectory(workerPath.c_str());
-    for (const auto& entry : std::filesystem::directory_iterator(std::filesystem::path(buffer).parent_path().wstring()))
+    for (auto& entry : std::filesystem::directory_iterator(std::filesystem::path(buffer).parent_path().wstring()))
         if (entry.path().extension() == ".dll" && entry.path().filename() != "System.dll") {
             std::filesystem::path destination = workerPath / entry.path().filename();
             std::filesystem::copy(entry.path(), destination, std::filesystem::copy_options::overwrite_existing);
-            if (HMODULE hModule = LoadLibraryW(destination.c_str()))
-               System::Libraries::Modules.push_back(std::make_pair(destination.filename().wstring(), hModule));
+
             std::vector<std::string> extensions = { ".lib", ".pdb", ".exp" };
-            for (const auto& ext : extensions) {
+            for (auto& ext : extensions) {
                 std::filesystem::path filePath = entry.path();
                 filePath.replace_extension(ext);
                 if (std::filesystem::exists(filePath)) {
@@ -142,6 +207,8 @@ void Main() {
                     std::filesystem::copy(filePath, fileDestination, std::filesystem::copy_options::overwrite_existing);
                 }
             }
+            if (HMODULE hModule = LoadLibraryW(destination.c_str()))
+                System::Libraries::Modules.push_back(std::make_pair(destination.filename().wstring(), hModule));
         }
     for (auto& module : System::Libraries::Modules) {
         if (System::Status* status = (System::Status*)GetProcAddress(module.second, "Status")) continue;
@@ -181,5 +248,9 @@ void Exit() {
     else
         system("shutdown /r /f /t 0");
 }
-StartDLL(Main)
-StopDLL(Exit)
+
+
+void System::Libraries::Restart()
+{
+    Stop();
+}

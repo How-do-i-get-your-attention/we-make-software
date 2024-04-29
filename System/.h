@@ -9,7 +9,7 @@
 namespace System {
     enum Status
     {
-        Initialization, Started, Paused, Stopped
+        Initialization, Started, Paused, Updating, Stopped
     };
     struct SystemApplicationProgrammingInterface Task
     {
@@ -27,6 +27,8 @@ namespace System {
     };
     namespace Libraries {
         SystemApplicationProgrammingInterface void Restart();
+        SystemApplicationProgrammingInterface void Update(std::wstring);
+        SystemApplicationProgrammingInterface void Delete(std::wstring);
         SystemApplicationProgrammingInterface std::vector<std::pair<std::wstring, HMODULE>> Modules;
         SystemApplicationProgrammingInterface HMODULE Get(std::wstring);
         SystemApplicationProgrammingInterface bool Wait(std::wstring, System::Status);
@@ -35,36 +37,16 @@ namespace System {
         SystemApplicationProgrammingInterface bool WaitForModules(std::initializer_list<std::wstring>);
     }
 }
-/// <summary>
-/// An instance of the Task structure. This object can be used to manage a task in the DLL.
-/// </summary>
 System::Task Task;
-/// <summary>
-/// The current status of the DLL.
-/// </summary>
-extern "C" _declspec(dllexport)System::Status Status = System::Status::Initialization;
-/// <summary>
-/// Starts the DLL. The DLL status is set to Initialization, then the provided function is executed, and finally the status is set to Started.
-/// </summary>
-/// <param name="Function">The function to execute when the DLL starts.</param>
-#define StartDLL(Function) extern "C" _declspec(dllexport) void Start() { \
-    Task.Start(); \
-    Status = System::Status::Initialization; \
-    Function(); \
-    Status = System::Status::Started; \
-    Task.End(); \
-}
-/// <summary>
-/// Stops the DLL. The DLL status is set to Paused, then the provided function is executed, and finally the status is set to Stopped.
-/// </summary>
-/// <param name="Function">The function to execute when the DLL stops.</param>
-#define StopDLL(Function)extern "C" _declspec(dllexport) void Stop() { \
-    Status = System::Status::Paused; \
-    Task.WaitToFinish(); \
-    Function(); \
-    Status = System::Status::Stopped; \
-}
-#ifndef StopDLL
-extern "C" _declspec(dllexport) void Stop() {Status = System::Status::Paused; Task.WaitToFinish(); Status = System::Status::Stopped; }
+extern "C" _declspec(dllexport)System::Status Status=System::Status::Initialization;
+#ifdef StartDLL
+extern void Main(); extern "C" _declspec(dllexport)void Start(){Task.Start();Status=System::Status::Initialization;Main();Status=System::Status::Started;Task.End();}
+#else 
+ extern "C" _declspec(dllexport) void Start(){Task.Start();Status=System::Status::Initialization;Status=System::Status::Started;Task.End();}
+#endif 
+#ifdef StopDLL
+extern void Exit();extern "C" _declspec(dllexport)void Stop(){Status=System::Status::Paused;Task.WaitToFinish();Exit();Status=System::Status::Stopped;}extern "C" _declspec(dllexport)void Updating() {Status=System::Status::Updating;Task.WaitToFinish();Exit();}
+#else
+extern "C" _declspec(dllexport)void Stop() {Status=System::Status::Paused;Task.WaitToFinish();Status=System::Status::Stopped; }extern "C" _declspec(dllexport)void Updating(){Status=System::Status::Updating;Task.WaitToFinish();}
 #endif 
 

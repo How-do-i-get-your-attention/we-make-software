@@ -266,15 +266,98 @@ I don't understand the concept of naming a file. Many choose to name their file 
 When creating a system, we have a start and stop. I made it easy so we can use macros:
 ```cpp
     //Status::Initialization
-    StartDLL(Main)
+    StartDLL // Not required   
     //Status::Started
     //Status::Paused
-    StopDLL(Exit) // Not required   
+    StopDLL // Not required   
     //Status::Stopped
 ```
 # System.dll
-The System::Task struct is used to manage tasks that can be started and stopped. Each task has a counter and a mutex for thread safety. The _Start and _End methods are used to increment and decrement the counter, respectively. The Start and End methods create new threads to call _Start and _End, respectively.
-The System::Libraries namespace contains methods for managing DLLs. The Get method returns the module handle for a given DLL name. The Wait method waits until a DLL reaches a certain status. The WaitForModule and WaitForModules methods wait until certain DLLs are loaded.
-The Main function sets up a directory for worker DLLs, copies DLLs from the parent directory to the worker directory, loads the DLLs, and starts each DLL in a new thread.
-The Exit function stops each DLL in a new thread, waits until all DLLs have stopped, unloads the DLLs, and then either sleeps for 5 minutes (if a debugger is attached) or restarts the system.
-The StartDLL and StopDLL are macros that define the Start and Stop functions, which are exported from the DLL. The Start function calls the Main function, and the Stop function calls the Exit function.
+
+This C++ code is part of the System namespace and is used to manage tasks and libraries in a multithreaded environment.
+
+The `System::Task` struct is used to manage tasks that can be started and stopped. Each task has a counter and a mutex for thread safety. The `_Start` and `_End` methods are used to increment and decrement the counter, respectively. The `Start` and `End` methods create new threads to call `_Start` and `_End`, respectively.
+
+The `System::Libraries` namespace contains methods for managing DLLs. The `Get` method returns the module handle for a given DLL name. The `Wait` method waits until a DLL reaches a certain status. The `WaitForModule` and `WaitForModules` methods wait until certain DLLs are loaded.
+
+The `Main` function sets up a directory for worker DLLs, copies DLLs from the parent directory to the worker directory, loads the DLLs, and starts each DLL in a new thread.
+
+The `Exit` function stops each DLL in a new thread, waits until all DLLs have stopped, unloads the DLLs, and then either sleeps for 5 minutes (if a debugger is attached) or restarts the system.
+
+The `StartDLL` and `StopDLL` are macros that define the Start and Stop functions, which are exported from the DLL. The Start function calls the Main function, and the Stop function calls the Exit function.
+
+The `System::Libraries::Update` method is used to update a DLL. It first stops the DLL if it's running, then copies the new DLL from the parent directory to the worker directory, and finally loads the new DLL.
+
+The `System::Libraries::Delete` method is used to delete a DLL. It first stops the DLL if it's running, then unloads the DLL, and finally removes the DLL and its associated files from the parent and worker directories.
+
+The `System::Libraries::Restart` method is used to restart all DLLs. It first stops all DLLs, then starts them again.
+
+
+
+# International Organization Standardization.dll
+
+This C++ code is part of the International Organization for Standardization (ISO) application programming interface (API). It provides a structured way to handle international standardization data, including languages, regulations, and countries or states.
+
+The code includes functions to retrieve languages, regulations, and companies, add laws to regulations, and retrieve laws from specific countries or states.
+
+The `International::Organization::Standardization::Regulation::Add` function is used to add or update a law in a specific regulation. If the law already exists, its value is updated. If it doesn't, a new law is added.
+
+The `International::Organization::Standardization::CountryOrCountryAndState::Get` function retrieves the value of a specific law from a country or state. If the law doesn't exist, a standard value is returned.
+
+The `International::Organization::Standardization::Company::Get` and `International::Organization::Standardization::Server::Get` functions retrieve the data of a specific company and server respectively.
+
+In the context of the code, if a country (or a country and state) has multiple regulations, the order of the regulations could matter. If a law is defined in multiple regulations, the law in the first regulation in the list would "override" the same law in subsequent regulations. 
+
+This is because when looking for a law using the `International::Organization::Standardization::CountryOrCountryAndState::Get` function, it will return the value of the law from the first regulation where it finds it.
+
+If the law is not found in any regulation, a standard value is returned.
+
+The `Main` function initializes the data for servers, companies, languages, regulations, and countries or states.
+
+
+Servers:
+    Name:b873ee7
+    Internet Protocol Address Version 4:212.227.201.38
+    Internet Protocol Address Version 6:2001:8d8:1801:8038::1
+
+Languages:
+    da:Danish
+    en:English
+
+Companies:
+    Name:dk.how-do-i-get-your-attention.com
+    Adddress:
+    Servers:b873ee7
+
+Standards:
+   Name:
+   Law:
+   Description:
+
+Regulations:
+- Danish legislation
+- General Data Protection Regulation
+
+Countries Or CountryAndStates:
+   Country:dk
+   Company:dk.how-do-i-get-your-attention.com
+   Default Language:da
+   Regulations:Danish legislation,General Data Protection Regulation
+
+   # Firewall.dll
+
+   This C++ code is part of the Firewall namespace and is used to manage firewall rules in a Windows environment.
+
+The `Firewall::Add` function is used to add a new firewall rule. It takes a protocol (TCP or UDP) and a port number as parameters. If the rule already exists, it simply returns. Otherwise, it creates a new rule that allows traffic on the specified port for the specified protocol.
+
+The `Firewall::Remove` function is used to remove a firewall rule. It takes a protocol (TCP or UDP) and a port number as parameters. If the rule does not exist, it simply returns. Otherwise, it removes the rule that allows traffic on the specified port for the specified protocol.
+
+The `Firewall::Exists` function is used to check if a firewall rule exists. It takes a protocol (TCP or UDP) and a port number as parameters. It returns true if the rule exists, and false otherwise.
+
+The `GenerateWindowsFirewallName` function is used to generate a name for a firewall rule. It takes a protocol (TCP or UDP) and a port number as parameters. The name is generated in the format "we-make-software[protocol][port]".
+
+The `Exit` function is used to remove all firewall rules when the application exits. It waits for the "Network.dll" to stop, and then removes all rules.
+
+The `Rules` vector stores all the firewall rules that have been added. Each rule is represented as a pair of a protocol and a port number.
+
+The `Mutex` is used to ensure thread safety when adding or removing firewall rules.
