@@ -327,11 +327,10 @@ Languages:
     - en:English
 
 Companies:
-    ```
+    
     Name:dk.how-do-i-get-your-attention.com
     Adddress:
     Servers:b873ee7
-    ```
 
 Standards:
    
@@ -340,20 +339,20 @@ Standards:
    Description:
 
 Regulations:
-```Danish legislation```
-```General Data Protection Regulation```
+
+    - Danish legislation
+    - General Data Protection Regulation
 
 Countries Or CountryAndStates:
-   ```
+   
    Country:dk
    Company:dk.how-do-i-get-your-attention.com
    Default Language:da
    Regulations:Danish legislation,General Data Protection Regulation
-   ```
 
 # Firewall.dll
 
- This C++ code is part of the Firewall namespace and is used to manage firewall rules in a Windows environment.
+   This C++ code is part of the Firewall namespace and is used to manage firewall rules in a Windows environment.
 
 The `Firewall::Add` function is used to add a new firewall rule. It takes a protocol (TCP or UDP) and a port number as parameters. If the rule already exists, it simply returns. Otherwise, it creates a new rule that allows traffic on the specified port for the specified protocol.
 
