@@ -324,6 +324,7 @@ Servers:
 Languages:
 
     - da:Danish
+
     - en:English
 
 Companies:
@@ -340,15 +341,16 @@ Standards:
 
 Regulations:
 
-    - Danish legislation
-    - General Data Protection Regulation
+    Danish legislation
+
+    General Data Protection Regulation
 
 Countries Or CountryAndStates:
-   
-   Country:dk
-   Company:dk.how-do-i-get-your-attention.com
-   Default Language:da
-   Regulations:Danish legislation,General Data Protection Regulation
+
+    Country:dk
+    Company:dk.how-do-i-get-your-attention.com
+    Default Language:da
+    Regulations:Danish legislation,General Data Protection Regulation
 
 # Firewall.dll
 
