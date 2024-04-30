@@ -405,3 +405,12 @@ The `Rules` vector stores all the firewall rules that have been added. Each rule
 
 The `Mutex` is used to ensure thread safety when adding or removing firewall rules.
 
+# ../Firewall/.h
+
+This C++ header file defines the Firewall namespace, which includes functionality for managing firewall rules.
+
+The Firewall::Protocol enum represents the protocol types that can be used, which are UDP and TCP.
+
+The Firewall::Add function is used to add a new rule to the firewall. It takes a protocol (either UDP or TCP) and an integer representing the port number.
+
+The Firewall::Remove function is used to remove a rule from the firewall. Similar to the Add function, it takes a protocol and a port number.
