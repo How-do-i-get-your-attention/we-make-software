@@ -1,5 +1,6 @@
 #pragma once
 #include "../Service/.h"
+#include <cwctype>
 #ifdef SystemApplicationProgrammingInterface
 #define SystemApplicationProgrammingInterface _declspec(dllexport)  
 #else
@@ -7,6 +8,7 @@
 #define SystemApplicationProgrammingInterface  _declspec(dllimport)  
 #endif
 namespace System {
+    SystemApplicationProgrammingInterface std::wstring Name;
     enum Status
     {
         Initialization, Started, Paused, Updating, Stopped
@@ -50,10 +52,8 @@ extern void Exit();extern "C" _declspec(dllexport)void Stop(){Status=System::Sta
 extern "C" _declspec(dllexport)void Stop() {Status=System::Status::Paused;Task.WaitToFinish();Status=System::Status::Stopped; }
 #endif 
 #ifdef UpgradeDLL
-extern void Unmount();extern "C" _declspec(dllexport)void Unmounting() { Status = System::Status::Updating; Task.WaitToFinish(); Unmount(); }
-extern void Mount(); extern "C" _declspec(dllexport)void Mounting() { Status = System::Status::Updating; Task.WaitToFinish(); Mount(); }
+extern void Unmount();extern "C" _declspec(dllexport)void Unmounting(){Status=System::Status::Updating;Task.WaitToFinish();Unmount();}
+extern void Mount();extern "C" _declspec(dllexport)void Mounting() {Task.WaitToFinish(); Mount();}
 #else
-extern "C" _declspec(dllexport)void Updating() { Status = System::Status::Updating; Task.WaitToFinish(); }
-#endif 
-
-
+extern "C" _declspec(dllexport)void Unmounting() {Status=System::Status::Updating;Task.WaitToFinish();}
+#endif

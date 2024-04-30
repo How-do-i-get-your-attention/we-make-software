@@ -280,7 +280,7 @@ The `System::Task` struct is used to manage tasks that can be started and stoppe
 
 The `System::Libraries` namespace contains methods for managing DLLs. The `Get` method returns the module handle for a given DLL name. The `Wait` method waits until a DLL reaches a certain status. The `WaitForModule` and `WaitForModules` methods wait until certain DLLs are loaded.
 
-The `Main` function sets up a directory for worker DLLs, copies DLLs from the parent directory to the worker directory, loads the DLLs, and starts each DLL in a new thread.
+The `Main` function sets the system name to the computer name, sets up a directory for worker DLLs, copies DLLs from the parent directory to the worker directory, loads the DLLs, and starts each DLL in a new thread.
 
 The `Exit` function stops each DLL in a new thread, waits until all DLLs have stopped, unloads the DLLs, and then either sleeps for 5 minutes (if a debugger is attached) or restarts the system.
 
@@ -314,6 +314,8 @@ The System::Status enum is used to represent the status of a task. It can be Ini
 The StartDLL and StopDLL are macros that define the Start and Stop functions, which are exported from the DLL. The Start function starts a task and sets its status to Initialization, then calls the Main function and sets the status to Started. The Stop function sets the status to Paused, waits for the task to finish, and then sets the status to Stopped.
 
 The UpgradeDLL macro defines the Unmounting and Mounting functions, which are used to update a DLL. The Unmounting function sets the status to Updating and waits for the task to finish, then calls the Unmount function. The Mounting function also sets the status to Updating and waits for the task to finish, then calls the Mount function.
+
+The System::Name is a global variable that can be used to store the name of the system. It's a std::wstring, which is a string of wide characters. This can be useful for storing names that include non-ASCII characters.
 
 # International Organization Standardization.dll
 
@@ -414,3 +416,34 @@ The Firewall::Protocol enum represents the protocol types that can be used, whic
 The Firewall::Add function is used to add a new rule to the firewall. It takes a protocol (either UDP or TCP) and an integer representing the port number.
 
 The Firewall::Remove function is used to remove a rule from the firewall. Similar to the Add function, it takes a protocol and a port number.
+
+# Network.dll
+
+This C++ source file defines the Network namespace, which includes methods for managing network connections.
+
+The Network::Add function is used to add a new network connection. It supports both UDP and TCP protocols. The function sets up the socket options, binds the socket to the specified port, and starts a new thread to handle incoming connections.
+
+The handleUDP and handleTCP functions are used to handle UDP and TCP connections, respectively. They receive incoming data and pass it to the appropriate function, which is loaded from a DLL.
+
+The Reader function is used to read incoming data from a connection. It checks the protocol of the connection and calls the appropriate handler function. If the connection is closed, it removes the connection from the list of active connections.
+
+The Remove function is used to remove a network connection. It waits for the connection to stop, closes the socket, removes the connection from the firewall, and removes the connection from the list of active connections.
+
+The Main function waits for the Firewall DLL to be loaded and started.
+
+The Exit function stops all active connections. It waits for each connection to stop and then removes it.
+
+# ../Network/.h
+
+This C++ header file defines the Network namespace, which includes the Add function and the Protocol enum.
+
+The Network::Protocol enum is used to specify the protocol of a network connection. It can be either UDP or TCP.
+
+The Network::Add function is used to add a new network connection. It takes four parameters: the protocol of the connection, the port number, the buffer size, and the name of the DLL that will handle the connection.
+
+The NetworkApplicationProgrammingInterface macro is used to export or import the Add function, depending on whether the NetworkApplicationProgrammingInterface symbol is defined. If the symbol is defined, the Add function is exported; otherwise, it is imported and the Network library is linked.
+
+The commented-out NetworkUDP and NetworkTCP macros are used to define the UDP and TCP functions, which are exported from the DLL. These functions are used to handle incoming UDP and TCP connections, respectively. The macros also call the Add function to add a new UDP or TCP connection.
+
+# Datacenter
+

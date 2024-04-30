@@ -186,6 +186,14 @@ bool System::Libraries::WaitForModules(std::initializer_list<std::wstring> names
     return true;
 }
 void Main() {
+    char computerName[MAX_COMPUTERNAME_LENGTH + 1];
+    DWORD size = sizeof(computerName) / sizeof(char);
+    GetComputerNameA(computerName, &size);
+    std::string str(computerName);
+    System::Name = std::wstring(str.begin(), str.end());
+    std::transform(System::Name.begin(), System::Name.end(), System::Name.begin(),
+        [](wchar_t c) { return std::towlower(c); });
+
     wchar_t buffer[MAX_PATH];
     (void)GetModuleFileNameW(NULL, buffer, MAX_PATH);
     std::filesystem::path exePath = std::filesystem::path(buffer).parent_path();
