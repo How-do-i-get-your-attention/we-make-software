@@ -274,6 +274,8 @@ When creating a system, we have a start and stop. I made it easy so we can use m
 ```
 # System.dll
 
+> ../System/.h
+
 This C++ code is part of the System namespace and is used to manage tasks and libraries in a multithreaded environment.
 
 The `System::Task` struct is used to manage tasks that can be started and stopped. Each task has a counter and a mutex for thread safety. The `_Start` and `_End` methods are used to increment and decrement the counter, respectively. The `Start` and `End` methods create new threads to call `_Start` and `_End`, respectively.
@@ -318,6 +320,8 @@ The UpgradeDLL macro defines the Unmounting and Mounting functions, which are us
 The System::Name is a global variable that can be used to store the name of the system. It's a std::wstring, which is a string of wide characters. This can be useful for storing names that include non-ASCII characters.
 
 # International Organization Standardization.dll
+
+> ../International Organization Standardization/.h
 
 This C++ code is part of the International Organization for Standardization (ISO) application programming interface (API). It provides a structured way to handle international standardization data, including languages, regulations, and countries or states.
 
@@ -387,6 +391,8 @@ The International::Organization::Standardization::CountryOrCountryAndState::Data
 
 # Firewall.dll
 
+> ../Firewall/.h
+
 This C++ code is part of the Firewall namespace and is used to manage firewall rules in a Windows environment.
 
 The `Firewall::Add` function is used to add a new firewall rule. It takes a protocol (TCP or UDP) and a port number as parameters. If the rule already exists, it simply returns. Otherwise, it creates a new rule that allows traffic on the specified port for the specified protocol.
@@ -418,6 +424,7 @@ The Firewall::Add function is used to add a new rule to the firewall. It takes a
 The Firewall::Remove function is used to remove a rule from the firewall. Similar to the Add function, it takes a protocol and a port number.
 
 # Network.dll
+> ../Network/.h
 
 This C++ source file defines the Network namespace, which includes methods for managing network connections.
 
@@ -444,6 +451,7 @@ The Network::Add function is used to add a new network connection. It takes four
 The NetworkApplicationProgrammingInterface macro is used to export or import the Add function, depending on whether the NetworkApplicationProgrammingInterface symbol is defined. If the symbol is defined, the Add function is exported; otherwise, it is imported and the Network library is linked.
 
 The commented-out NetworkUDP and NetworkTCP macros are used to define the UDP and TCP functions, which are exported from the DLL. These functions are used to handle incoming UDP and TCP connections, respectively. The macros also call the Add function to add a new UDP or TCP connection.
+
 
 # Datacenter
 
