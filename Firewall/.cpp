@@ -2,14 +2,17 @@
 #define FirewallApplicationProgrammingInterface
 #include ".h"
 std::vector<std::pair<Firewall::Protocol, int>> Rules;
+void Clean() {
+    while (!Rules.empty()) {
+		auto rule = Rules.front();
+		Firewall::Protocol protocol = rule.first;
+		int port = rule.second;
+		Firewall::Remove(protocol, port);
+	}
+}
 void Exit(){
     System::Libraries::Wait(L"Network.dll", System::Stopped);
-    while (!Rules.empty()) {
-        auto rule = Rules.front();
-        Firewall::Protocol protocol = rule.first;
-        int port = rule.second;
-        Firewall::Remove(protocol, port);
-    }
+    Clean();
 }
 std::wstring GenerateWindowsFirewallName(Firewall::Protocol protocol, int Port)
 {

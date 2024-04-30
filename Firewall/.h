@@ -1,7 +1,7 @@
 #pragma once
 #include "../International Organization Standardization/.h"
 #ifdef FirewallApplicationProgrammingInterface
-#define NetworkApplicationProgrammingInterface _declspec(dllexport)  
+#define FirewallApplicationProgrammingInterface _declspec(dllexport)  
 #else
 #pragma comment(lib, "Firewall.lib")
 #define FirewallApplicationProgrammingInterface  _declspec(dllimport)  

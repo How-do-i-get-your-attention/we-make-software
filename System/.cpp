@@ -104,7 +104,7 @@ void System::Libraries::Update(std::wstring name)
     std::lock_guard<std::mutex> lock(UpgradeMutex);
     Upgrades.push_back(name);
     if (HMODULE get = Get(name)) {
-        if (auto UpdatingFunc = (void (*)(void))GetProcAddress(get, "Updating"))UpdatingFunc();
+        if (auto UnmountingFunc = (void (*)(void))GetProcAddress(get, "Unmounting"))UnmountingFunc();
         FreeLibrary(get);
         System::Libraries::Modules.erase(std::remove_if(System::Libraries::Modules.begin(), System::Libraries::Modules.end(), [&](std::pair<std::wstring, HMODULE>& pair) { return pair.first == name; }), System::Libraries::Modules.end());
     }
@@ -129,6 +129,7 @@ void System::Libraries::Update(std::wstring name)
                 std::thread([StartFunc] { StartFunc(); }).detach();
             System::Libraries::Modules.push_back(std::make_pair(destination.filename().wstring(), hModule));
             Upgrades.erase(std::remove(Upgrades.begin(), Upgrades.end(), name), Upgrades.end());
+            if (auto MountingFunc = (void (*)(void))GetProcAddress(hModule, "Mounting"))MountingFunc();
             return;
         }
         FreeLibrary(hModule);
@@ -248,8 +249,6 @@ void Exit() {
     else
         system("shutdown /r /f /t 0");
 }
-
-
 void System::Libraries::Restart()
 {
     Stop();

@@ -15,6 +15,7 @@ namespace  International{
 				{
 					std::wstring Name;
 					std::vector<unsigned char> IntenetProtocolAddressVersion4, IntenetProtocolAddressVersion6;
+					std::vector<std::wstring> Storages
 				};
 				InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<Server::Data>::iterator Get(std::wstring);
 			}

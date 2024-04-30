@@ -49,13 +49,8 @@ std::vector<International::Organization::Standardization::Server::Data>::iterato
 }
 void Main() {
 	using namespace International::Organization::Standardization;
-	CountriesOrCountryAndStates.clear();
-	Companies.clear();
-	Regulations.clear();
-	Languages.clear();
-	Servers.clear();
 	Servers = {
-		{L"b873ee7",{212,227,201,38},{32, 1, 8, 216, 24, 1, 128, 56, 0, 0, 0, 0, 0, 0, 0, 1}}
+		{L"b873ee7",{212,227,201,38},{32, 1, 8, 216, 24, 1, 128, 56, 0, 0, 0, 0, 0, 0, 0, 1},{L"D"}}
 	};
 	Companies = {
 		{ L"123456789", L"dk.how-do-i-get-your-attention.com", L"Address A",{ Server::Get(L"b873ee7")} },

@@ -45,8 +45,15 @@ extern void Main(); extern "C" _declspec(dllexport)void Start(){Task.Start();Sta
  extern "C" _declspec(dllexport) void Start(){Task.Start();Status=System::Status::Initialization;Status=System::Status::Started;Task.End();}
 #endif 
 #ifdef StopDLL
-extern void Exit();extern "C" _declspec(dllexport)void Stop(){Status=System::Status::Paused;Task.WaitToFinish();Exit();Status=System::Status::Stopped;}extern "C" _declspec(dllexport)void Updating() {Status=System::Status::Updating;Task.WaitToFinish();Exit();}
+extern void Exit();extern "C" _declspec(dllexport)void Stop(){Status=System::Status::Paused;Task.WaitToFinish();Exit();Status=System::Status::Stopped;}
 #else
-extern "C" _declspec(dllexport)void Stop() {Status=System::Status::Paused;Task.WaitToFinish();Status=System::Status::Stopped; }extern "C" _declspec(dllexport)void Updating(){Status=System::Status::Updating;Task.WaitToFinish();}
+extern "C" _declspec(dllexport)void Stop() {Status=System::Status::Paused;Task.WaitToFinish();Status=System::Status::Stopped; }
 #endif 
+#ifdef UpgradeDLL
+extern void Unmount();extern "C" _declspec(dllexport)void Unmounting() { Status = System::Status::Updating; Task.WaitToFinish(); Unmount(); }
+extern void Mount(); extern "C" _declspec(dllexport)void Mounting() { Status = System::Status::Updating; Task.WaitToFinish(); Mount(); }
+#else
+extern "C" _declspec(dllexport)void Updating() { Status = System::Status::Updating; Task.WaitToFinish(); }
+#endif 
+
 
