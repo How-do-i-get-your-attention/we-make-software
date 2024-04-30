@@ -275,37 +275,60 @@ When creating a system, we have a start and stop. I made it easy so we can use m
 # System.dll
 
 This C++ code is part of the System namespace and is used to manage tasks and libraries in a multithreaded environment.
+
 The `System::Task` struct is used to manage tasks that can be started and stopped. Each task has a counter and a mutex for thread safety. The `_Start` and `_End` methods are used to increment and decrement the counter, respectively. The `Start` and `End` methods create new threads to call `_Start` and `_End`, respectively.
+
 The `System::Libraries` namespace contains methods for managing DLLs. The `Get` method returns the module handle for a given DLL name. The `Wait` method waits until a DLL reaches a certain status. The `WaitForModule` and `WaitForModules` methods wait until certain DLLs are loaded.
+
 The `Main` function sets up a directory for worker DLLs, copies DLLs from the parent directory to the worker directory, loads the DLLs, and starts each DLL in a new thread.
+
 The `Exit` function stops each DLL in a new thread, waits until all DLLs have stopped, unloads the DLLs, and then either sleeps for 5 minutes (if a debugger is attached) or restarts the system.
+
 The `StartDLL` and `StopDLL` are macros that define the Start and Stop functions, which are exported from the DLL. The Start function calls the Main function, and the Stop function calls the Exit function.
+
 The `System::Libraries::Update` method is used to update a DLL. It first stops the DLL if it's running, then copies the new DLL from the parent directory to the worker directory, and finally loads the new DLL.
+
 The `System::Libraries::Delete` method is used to delete a DLL. It first stops the DLL if it's running, then unloads the DLL, and finally removes the DLL and its associated files from the parent and worker directories.
+
 The `System::Libraries::Restart` method is used to restart all DLLs. It first stops all DLLs, then starts them again.
+
 The `System::Libraries::Wait` function waits until a DLL reaches a certain status. It keeps checking the status of the DLL in a loop until the DLL reaches the desired status.
+
 The `System::Libraries::WaitForModule` function waits until a specific DLL is loaded. It keeps checking in a loop until the DLL is found in the list of loaded modules.
+
 The `System::Libraries::WaitForModules` function waits until all DLLs in a list are loaded. It keeps checking in a loop until all DLLs are found in the list of loaded modules.
+
 The `System::Libraries::WaitForModules` function (overloaded version) waits until all DLLs in a list reach a certain status. It keeps checking in a loop until all DLLs reach the desired status.
 
 
 # ../System/.h
 
 This C++ header file defines the System namespace, which includes the Task struct and the Libraries namespace.
+
 The System::Task struct is used to manage tasks that can be started and stopped. It has methods for starting and ending tasks, checking if a task is running, and waiting for a task to finish.
+
 The System::Libraries namespace contains methods for managing DLLs. It includes methods for restarting, updating, and deleting DLLs. It also has methods for getting a DLL, waiting for a DLL to reach a certain status, and waiting for one or more DLLs to be loaded.
+
 The System::Status enum is used to represent the status of a task. It can be Initialization, Started, Paused, Updating, or Stopped.
+
 The StartDLL and StopDLL are macros that define the Start and Stop functions, which are exported from the DLL. The Start function starts a task and sets its status to Initialization, then calls the Main function and sets the status to Started. The Stop function sets the status to Paused, waits for the task to finish, and then sets the status to Stopped.
+
 The UpgradeDLL macro defines the Unmounting and Mounting functions, which are used to update a DLL. The Unmounting function sets the status to Updating and waits for the task to finish, then calls the Unmount function. The Mounting function also sets the status to Updating and waits for the task to finish, then calls the Mount function.
 
 # International Organization Standardization.dll
 
 This C++ code is part of the International Organization for Standardization (ISO) application programming interface (API). It provides a structured way to handle international standardization data, including languages, regulations, and countries or states.
+
 The `International::Organization::Standardization::Language::Get` function retrieves a language based on its Alpha code. If the language is not found, it returns an iterator pointing to the end of the Languages vector.
+
 The `International::Organization::Standardization::Regulation::Get` function retrieves a regulation based on its name. If the regulation is not found, it returns an iterator pointing to the end of the Regulations vector.
+
 The `International::Organization::Standardization::Regulation::Add` function adds or updates a law in a specific regulation. If the law already exists, its value is updated. If it doesn't, a new law is added.
+
 The `International::Organization::Standardization::CountryOrCountryAndState::Get` function retrieves the value of a specific law from a country or state. If the law doesn't exist, a standard value is returned.
+
 The `International::Organization::Standardization::Company::Get` and `International::Organization::Standardization::Server::Get` functions retrieve the data of a specific company and server respectively.
+
 The `Main` function initializes the data for servers, companies, languages, regulations, and countries or states. It clears the existing data and then adds new data.
 
 
@@ -349,10 +372,15 @@ Countries Or CountryAndStates:
 # ../International Organization Standardization/.h
 
 This C++ header file defines the International::Organization::Standardization namespace, which includes several nested namespaces and data structures for managing international standardization data.
+
 The International::Organization::Standardization::Server::Data struct represents a server with a name and Internet Protocol (IP) addresses for both version 4 and version 6. It also includes a list of storages. The Get method returns an iterator to a server with a specified name.
+
 The International::Organization::Standardization::Company::Data struct represents a company with a registering number, name, address, and a list of servers. The Get method returns an iterator to a company with a specified name.
+'
 The International::Organization::Standardization::Language::Data struct represents a language with an alpha code. The Get method returns an iterator to a language with a specified alpha code.
+
 The International::Organization::Standardization::Regulation::Data struct represents a regulation with a name and a list of laws. Each law is represented as a tuple with a name, a description, and an additional data field of any type. The Add method adds a new law to a regulation. The Get method returns an iterator to a regulation with a specified name.
+
 The International::Organization::Standardization::CountryOrCountryAndState::Data struct represents a country or a country and state with an alpha code, a company, a language, and a list of regulations. The Get method returns a data field of any type from a country or a country and state with a specified alpha code, name, description, and additional data field.
 
 # Firewall.dll
