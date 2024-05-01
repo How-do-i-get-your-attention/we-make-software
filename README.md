@@ -429,6 +429,7 @@ The Firewall::Add function is used to add a new rule to the firewall. It takes a
 The Firewall::Remove function is used to remove a rule from the firewall. Similar to the Add function, it takes a protocol and a port number.
 
 # Network.dll
+
 > ../Network/.h
 
 This C++ source file defines the Network namespace, which includes methods for managing network connections.
@@ -459,6 +460,8 @@ The commented-out NetworkUDP and NetworkTCP macros are used to define the UDP an
 
 
 # Storage.dll
+
+> ../Storage/.h
 
 The `Storage::Read(uint8_t ID, uint64_t Sector)`: This method reads data from a specific sector of the storage identified by the given ID. It returns a vector of unsigned characters representing the data read.
 
