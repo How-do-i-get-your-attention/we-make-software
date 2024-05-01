@@ -460,29 +460,29 @@ The commented-out NetworkUDP and NetworkTCP macros are used to define the UDP an
 
 # Storage.dll
 
-- `Storage::Read(uint8_t ID, uint64_t Sector)`: This method reads data from a specific sector of the storage identified by the given ID. It returns a vector of unsigned characters representing the data read.
+The `Storage::Read(uint8_t ID, uint64_t Sector)`: This method reads data from a specific sector of the storage identified by the given ID. It returns a vector of unsigned characters representing the data read.
 
-- `Storage::Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer)`: This method writes data to a specific sector of the storage identified by the given ID. The data to be written is provided in the form of a vector of unsigned characters. The method returns a boolean indicating whether the write operation was successful.
+The `Storage::Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer)`: This method writes data to a specific sector of the storage identified by the given ID. The data to be written is provided in the form of a vector of unsigned characters. The method returns a boolean indicating whether the write operation was successful.
 
-- `Storage::Size(uint8_t ID)`: This method returns the size of the storage identified by the given ID. The size is returned as a tuple of two integers representing the used and total space.
+The `Storage::Size(uint8_t ID)`: This method returns the size of the storage identified by the given ID. The size is returned as a tuple of two integers representing the used and total space.
 
-- `Exit()`: This method closes all open files and clears the list of files.
+The `Exit()`: This method closes all open files and clears the list of files.
 
-- `Storage::Mount()`: This method mounts the storage. It opens a file for each storage in the server and adds it to the list of files.
+The `Storage::Mount()`: This method mounts the storage. It opens a file for each storage in the server and adds it to the list of files.
 
 # ../Storage/.h
 
 The `Storage` namespace contains the following:
 
-- `Storage::Mount()`: A method used to mount the storage.
+The `Storage::Mount()`: A method used to mount the storage.
 
-- `Storage::Files`: A vector of tuples, where each tuple contains an ID and a handle to a file.
-- 
-- `Storage::Read(uint8_t ID, uint64_t Sector)`: A method that reads data from a specific sector of the storage identified by the given ID.
-- 
-- `Storage::Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer)`: A method that writes data to a specific sector of the storage identified by the given ID.
-- 
-- `Storage::Size(uint8_t ID)`: A method that returns the size of the storage identified by the given ID.
+The `Storage::Files`: A vector of tuples, where each tuple contains an ID and a handle to a file.
+
+The `Storage::Read(uint8_t ID, uint64_t Sector)`: A method that reads data from a specific sector of the storage identified by the given ID.
+ 
+The `Storage::Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer)`: A method that writes data to a specific sector of the storage identified by the given ID.
+ 
+The `Storage::Size(uint8_t ID)`: A method that returns the size of the storage identified by the given ID.
 
 
 # Datacenter.dll
