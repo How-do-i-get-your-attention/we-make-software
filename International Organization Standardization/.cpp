@@ -1,6 +1,7 @@
 #define StartDLL
+#define UpgradeDLL
 #define InternationaOrganizationStandardizationlApplicationProgrammingInterface
-#include ".h"
+#include "../Storage/.h"
 
 
 std::vector<International::Organization::Standardization::Language::Data>::iterator International::Organization::Standardization::Language::Get(std::wstring Alpha) {
@@ -47,10 +48,11 @@ std::vector<International::Organization::Standardization::Server::Data>::iterato
 	}
 	return International::Organization::Standardization::Servers.end();
 }
+
 void Main() {
 	using namespace International::Organization::Standardization;
 	Servers = {
-		{L"b873ee7",{212,227,201,38},{32, 1, 8, 216, 24, 1, 128, 56, 0, 0, 0, 0, 0, 0, 0, 1},{L"D"}}
+		{L"b873ee7",{212,227,201,38},{32, 1, 8, 216, 24, 1, 128, 56, 0, 0, 0, 0, 0, 0, 0, 1},{L"D:\\0.bin"}}
 	};
 	Companies = {
 		{ L"123456789", L"dk.how-do-i-get-your-attention.com", L"Address A",{ Server::Get(L"b873ee7")} },
@@ -66,4 +68,9 @@ void Main() {
 	CountriesOrCountryAndStates = {
 		{L"dk",Company::Get(L"dk.how-do-i-get-your-attention.com"), Language::Get(L"da") , {Regulation::Get(L"Danish legislation"), Regulation::Get(L"General Data Protection Regulation")}}
 	};
+	System::Libraries::WaitForModules({ L"Storage.dll" }, System::Started);
+	Storage::Mount();
+}
+void Unmount() {
+	Storage::Unmount();
 }

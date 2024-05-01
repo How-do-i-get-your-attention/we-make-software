@@ -315,13 +315,13 @@ The System::Status enum is used to represent the status of a task. It can be Ini
 
 The StartDLL and StopDLL are macros that define the Start and Stop functions, which are exported from the DLL. The Start function starts a task and sets its status to Initialization, then calls the Main function and sets the status to Started. The Stop function sets the status to Paused, waits for the task to finish, and then sets the status to Stopped.
 
-The UpgradeDLL macro defines the Unmounting and Mounting functions, which are used to update a DLL. The Unmounting function sets the status to Updating and waits for the task to finish, then calls the Unmount function. The Mounting function also sets the status to Updating and waits for the task to finish, then calls the Mount function.
+The UpgradeDLL macro defines the Unmounting and Mounting functions, which are used to update a DLL. The Unmounting function sets the status to Updating and waits for the task to finish, then calls the Unmount function.
 
 The System::Name is a global variable that can be used to store the name of the system. It's a std::wstring, which is a string of wide characters. This can be useful for storing names that include non-ASCII characters.
 
 # International Organization Standardization.dll
 
-> ../International Organization Standardization/.h
+> ../Storage/.h
 
 This C++ code is part of the International Organization for Standardization (ISO) application programming interface (API). It provides a structured way to handle international standardization data, including languages, regulations, and countries or states.
 
@@ -337,6 +337,7 @@ The `International::Organization::Standardization::Company::Get` and `Internatio
 
 The `Main` function initializes the data for servers, companies, languages, regulations, and countries or states. It clears the existing data and then adds new data.
 
+The `Unmount` function calls the Unmount function from the Storage namespace. It's likely used to unmount or disconnect from a storage resource.
 
 
 Servers:
@@ -344,7 +345,7 @@ Servers:
     Name:b873ee7
     Internet Protocol Address Version 4:212.227.201.38
     Internet Protocol Address Version 6:2001:8d8:1801:8038::1
-    Storages:D
+    Storages:D:\0.bin
 
 Languages:
 

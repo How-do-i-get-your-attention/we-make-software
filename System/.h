@@ -11,7 +11,7 @@ namespace System {
     SystemApplicationProgrammingInterface std::wstring Name;
     enum Status
     {
-        Initialization, Started, Paused, Updating, Stopped
+      Initialization, Started, Paused, Updating, Stopped
     };
     struct SystemApplicationProgrammingInterface Task
     {
@@ -53,7 +53,6 @@ extern "C" _declspec(dllexport)void Stop() {Status=System::Status::Paused;Task.W
 #endif 
 #ifdef UpgradeDLL
 extern void Unmount();extern "C" _declspec(dllexport)void Unmounting(){Status=System::Status::Updating;Task.WaitToFinish();Unmount();}
-extern void Mount();extern "C" _declspec(dllexport)void Mounting() {Task.WaitToFinish(); Mount();}
 #else
 extern "C" _declspec(dllexport)void Unmounting() {Status=System::Status::Updating;Task.WaitToFinish();}
 #endif
