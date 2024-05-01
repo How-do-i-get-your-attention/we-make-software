@@ -8,7 +8,7 @@
 #define SystemApplicationProgrammingInterface  _declspec(dllimport)  
 #endif
 namespace System {
-    SystemApplicationProgrammingInterface std::wstring Name;
+    SystemApplicationProgrammingInterface std::string Name;
     enum Status
     {
       Initialization, Started, Paused, Updating, Stopped
@@ -51,7 +51,7 @@ extern void Exit();extern "C" _declspec(dllexport)void Stop(){Status=System::Sta
 #else
 extern "C" _declspec(dllexport)void Stop() {Status=System::Status::Paused;Task.WaitToFinish();Status=System::Status::Stopped; }
 #endif 
-#ifdef UpgradeDLL
+#ifdef UnmountDLL
 extern void Unmount();extern "C" _declspec(dllexport)void Unmounting(){Status=System::Status::Updating;Task.WaitToFinish();Unmount();}
 #else
 extern "C" _declspec(dllexport)void Unmounting() {Status=System::Status::Updating;Task.WaitToFinish();}

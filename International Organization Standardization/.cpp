@@ -1,10 +1,9 @@
 #define StartDLL
-#define UpgradeDLL
 #define InternationaOrganizationStandardizationlApplicationProgrammingInterface
 #include "../Storage/.h"
 
 
-std::vector<International::Organization::Standardization::Language::Data>::iterator International::Organization::Standardization::Language::Get(std::wstring Alpha) {
+std::vector<International::Organization::Standardization::Language::Data>::iterator International::Organization::Standardization::Language::Get(std::string Alpha) {
 	for (auto it = International::Organization::Standardization::Languages.begin(); it != International::Organization::Standardization::Languages.end(); ++it) {
 		if (it->Alpha == Alpha)
 			return it;
@@ -41,36 +40,40 @@ std::vector<International::Organization::Standardization::Company::Data>::iterat
 	}
 	return International::Organization::Standardization::Companies.end();
 }
-std::vector<International::Organization::Standardization::Server::Data>::iterator International::Organization::Standardization::Server::Get(std::wstring Name) {
+std::vector<International::Organization::Standardization::Server::Data>::iterator International::Organization::Standardization::Server::Get(std::string Name) {
 	for (auto it = International::Organization::Standardization::Servers.begin(); it != International::Organization::Standardization::Servers.end(); ++it) {
 		if (it->Name == Name)
 			return it;
 	}
 	return International::Organization::Standardization::Servers.end();
 }
-
 void Main() {
 	using namespace International::Organization::Standardization;
+	// Server name always needs to be in lowercase
+	// Server name can't be more than 255 in length
+	// Max size of bin file is 17592185978880
+	// Files should be indexed starting from 0
 	Servers = {
-		{L"b873ee7",{212,227,201,38},{32, 1, 8, 216, 24, 1, 128, 56, 0, 0, 0, 0, 0, 0, 0, 1},{L"D:\\0.bin"}}
+		{ "b873ee7",{212,227,201,38},{32, 1, 8, 216, 24, 1, 128, 56, 0, 0, 0, 0, 0, 0, 0, 1},{
+			{L"D:\\Quality Time.bin",0,3000000000000}
+		}}
 	};
 	Companies = {
-		{ L"123456789", L"dk.how-do-i-get-your-attention.com", L"Address A",{ Server::Get(L"b873ee7")} },
+		{ L"123456789", L"dk.how-do-i-get-your-attention.com", L"Address A",{ Server::Get("b873ee7")} },
 	};
+	// Languages iso code always needs to be in lowercase
 	Languages = {
-		{ L"da" },
-		{ L"en" }
+		{ "da" },
+		{ "en" }
 	};
 	Regulations = {
 		{L"Danish legislation"},
 		{L"General Data Protection Regulation"}
 	};
+	// Country Or Country And States iso code always needs to be in lowercase
 	CountriesOrCountryAndStates = {
-		{L"dk",Company::Get(L"dk.how-do-i-get-your-attention.com"), Language::Get(L"da") , {Regulation::Get(L"Danish legislation"), Regulation::Get(L"General Data Protection Regulation")}}
+		{ "dk",Company::Get(L"dk.how-do-i-get-your-attention.com"), Language::Get("da") , {Regulation::Get(L"Danish legislation"), Regulation::Get(L"General Data Protection Regulation")}}
 	};
 	System::Libraries::WaitForModules({ L"Storage.dll" }, System::Started);
 	Storage::Mount();
-}
-void Unmount() {
-	Storage::Unmount();
 }

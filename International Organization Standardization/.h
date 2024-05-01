@@ -11,13 +11,21 @@ namespace  International{
 		namespace Standardization
 		{
 			namespace Server {
+				namespace  Storage {
+					struct Data
+					{
+						std::wstring Address;
+						uint8_t ID;
+						uint64_t Space;
+					};
+				}
 				struct Data
 				{
-					std::wstring Name;
+					std::string Name;
 					std::vector<unsigned char> IntenetProtocolAddressVersion4, IntenetProtocolAddressVersion6;
-					std::vector<std::wstring> Storages;
+					std::vector<Storage::Data> Storages;
 				};
-				InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<Server::Data>::iterator Get(std::wstring);
+				InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<Server::Data>::iterator Get(std::string);
 			}
 			InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<Server::Data> Servers;
 			namespace Company {
@@ -32,9 +40,9 @@ namespace  International{
 			namespace Language {
 				struct Data
 				{
-					std::wstring Alpha;
+					std::string Alpha;
 				};
-				InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<International::Organization::Standardization::Language::Data>::iterator Get(std::wstring);
+				InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<International::Organization::Standardization::Language::Data>::iterator Get(std::string);
 			}
 			InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<Language::Data> Languages;
 			namespace Regulation {
@@ -47,20 +55,17 @@ namespace  International{
 				InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<Data>::iterator Get (std::wstring);
 			}
 			InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<Regulation::Data> Regulations;
-	
 			namespace CountryOrCountryAndState {
 				struct Data
 				{
-					std::wstring Alpha;
+					std::string Alpha;
 					std::vector<Company::Data>::iterator Company;
 					std::vector<Language::Data>::iterator Language;
 					std::vector<std::vector<Regulation::Data>::iterator> Regulations;
-
 				};
 				InternationaOrganizationStandardizationlApplicationProgrammingInterface std::any Get(std::vector<CountryOrCountryAndState::Data>::iterator, std::wstring, std::wstring,std::any);
 			}
 			InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<CountryOrCountryAndState::Data> CountriesOrCountryAndStates;
-
 		}
 	}
 }

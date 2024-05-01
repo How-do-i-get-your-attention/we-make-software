@@ -129,7 +129,6 @@ void System::Libraries::Update(std::wstring name)
                 std::thread([StartFunc] { StartFunc(); }).detach();
             System::Libraries::Modules.push_back(std::make_pair(destination.filename().wstring(), hModule));
             Upgrades.erase(std::remove(Upgrades.begin(), Upgrades.end(), name), Upgrades.end());
-            if (auto MountingFunc = (void (*)(void))GetProcAddress(hModule, "Mounting"))MountingFunc();
             return;
         }
         FreeLibrary(hModule);
@@ -189,11 +188,8 @@ void Main() {
     char computerName[MAX_COMPUTERNAME_LENGTH + 1];
     DWORD size = sizeof(computerName) / sizeof(char);
     GetComputerNameA(computerName, &size);
-    std::string str(computerName);
-    System::Name = std::wstring(str.begin(), str.end());
-    std::transform(System::Name.begin(), System::Name.end(), System::Name.begin(),
-        [](wchar_t c) { return std::towlower(c); });
-
+    System::Name = std::string(computerName);
+    std::transform(System::Name.begin(), System::Name.end(), System::Name.begin(),[](unsigned char c) { return std::tolower(c); });
     wchar_t buffer[MAX_PATH];
     (void)GetModuleFileNameW(NULL, buffer, MAX_PATH);
     std::filesystem::path exePath = std::filesystem::path(buffer).parent_path();

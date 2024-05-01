@@ -272,6 +272,9 @@ When creating a system, we have a start and stop. I made it easy so we can use m
     StopDLL // Not required   
     //Status::Stopped
 ```
+
+Quality Time - The time spent with your loved ones is the most precious time. Make every moment count.
+
 # System.dll
 
 > ../System/.h
@@ -307,17 +310,15 @@ The `System::Libraries::WaitForModules` function (overloaded version) waits unti
 
 This C++ header file defines the System namespace, which includes the Task struct and the Libraries namespace.
 
-The System::Task struct is used to manage tasks that can be started and stopped. It has methods for starting and ending tasks, checking if a task is running, and waiting for a task to finish.
+The `System::Task` struct is used to manage tasks that can be started and stopped. It has methods for starting and ending tasks, checking if a task is running, and waiting for a task to finish.
 
-The System::Libraries namespace contains methods for managing DLLs. It includes methods for restarting, updating, and deleting DLLs. It also has methods for getting a DLL, waiting for a DLL to reach a certain status, and waiting for one or more DLLs to be loaded.
+The `System::Libraries` namespace contains methods for managing DLLs. It includes methods for restarting, updating, and deleting DLLs. It also has methods for getting a DLL, waiting for a DLL to reach a certain status, and waiting for one or more DLLs to be loaded.
 
-The System::Status enum is used to represent the status of a task. It can be Initialization, Started, Paused, Updating, or Stopped.
+The `System::Status` enum is used to represent the status of a task. It can be Initialization, Started, Paused, Updating, or Stopped.
 
-The StartDLL and StopDLL are macros that define the Start and Stop functions, which are exported from the DLL. The Start function starts a task and sets its status to Initialization, then calls the Main function and sets the status to Started. The Stop function sets the status to Paused, waits for the task to finish, and then sets the status to Stopped.
+The `StartDLL`, `StopDLL`, and `UnmountDLL` are macros that define the Start, Stop, and Unmount functions, which are exported from the DLL. The Start function starts a task and sets its status to Initialization, then calls the Main function and sets the status to Started. The Stop function sets the status to Paused, waits for the task to finish, and then sets the status to Stopped. The Unmount function sets the status to Updating, waits for the task to finish, and then calls the Unmount function.
 
-The UpgradeDLL macro defines the Unmounting and Mounting functions, which are used to update a DLL. The Unmounting function sets the status to Updating and waits for the task to finish, then calls the Unmount function.
-
-The System::Name is a global variable that can be used to store the name of the system. It's a std::wstring, which is a string of wide characters. This can be useful for storing names that include non-ASCII characters.
+The `System::Name` is a global variable that can be used to store the name of the system. It's a std::wstring, which is a string of wide characters.
 
 # International Organization Standardization.dll
 
@@ -337,15 +338,16 @@ The `International::Organization::Standardization::Company::Get` and `Internatio
 
 The `Main` function initializes the data for servers, companies, languages, regulations, and countries or states. It clears the existing data and then adds new data.
 
-The `Unmount` function calls the Unmount function from the Storage namespace. It's likely used to unmount or disconnect from a storage resource.
-
 
 Servers:
   
     Name:b873ee7
     Internet Protocol Address Version 4:212.227.201.38
     Internet Protocol Address Version 6:2001:8d8:1801:8038::1
-    Storages:D:\0.bin
+    Storages:
+        Drive: D:\Quality Time.bin
+        ID:0
+        Bytes: 3000000000000
 
 Languages:
 
@@ -380,10 +382,12 @@ Countries Or CountryAndStates:
 
 This C++ header file defines the International::Organization::Standardization namespace, which includes several nested namespaces and data structures for managing international standardization data.
 
-The International::Organization::Standardization::Server::Data struct represents a server with a name and Internet Protocol (IP) addresses for both version 4 and version 6. It also includes a list of storages. The Get method returns an iterator to a server with a specified name.
+The International::Organization::Standardization::Server::Storage::Data struct represents a storage with an address, an ID, and a space.
+
+The International::Organization::Standardization::Server::Data struct represents a server with a name, Internet Protocol (IP) addresses for both version 4 and version 6, and a list of storages. The Get method returns an iterator to a server with a specified name.
 
 The International::Organization::Standardization::Company::Data struct represents a company with a registering number, name, address, and a list of servers. The Get method returns an iterator to a company with a specified name.
-'
+
 The International::Organization::Standardization::Language::Data struct represents a language with an alpha code. The Get method returns an iterator to a language with a specified alpha code.
 
 The International::Organization::Standardization::Regulation::Data struct represents a regulation with a name and a list of laws. Each law is represented as a tuple with a name, a description, and an additional data field of any type. The Add method adds a new law to a regulation. The Get method returns an iterator to a regulation with a specified name.
@@ -454,5 +458,32 @@ The NetworkApplicationProgrammingInterface macro is used to export or import the
 The commented-out NetworkUDP and NetworkTCP macros are used to define the UDP and TCP functions, which are exported from the DLL. These functions are used to handle incoming UDP and TCP connections, respectively. The macros also call the Add function to add a new UDP or TCP connection.
 
 
-# Datacenter
+# Storage.dll
+
+- `Storage::Read(uint8_t ID, uint64_t Sector)`: This method reads data from a specific sector of the storage identified by the given ID. It returns a vector of unsigned characters representing the data read.
+
+- `Storage::Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer)`: This method writes data to a specific sector of the storage identified by the given ID. The data to be written is provided in the form of a vector of unsigned characters. The method returns a boolean indicating whether the write operation was successful.
+
+- `Storage::Size(uint8_t ID)`: This method returns the size of the storage identified by the given ID. The size is returned as a tuple of two integers representing the used and total space.
+
+- `Exit()`: This method closes all open files and clears the list of files.
+
+- `Storage::Mount()`: This method mounts the storage. It opens a file for each storage in the server and adds it to the list of files.
+
+# ../Storage/.h
+
+The `Storage` namespace contains the following:
+
+- `Storage::Mount()`: A method used to mount the storage.
+
+- `Storage::Files`: A vector of tuples, where each tuple contains an ID and a handle to a file.
+- 
+- `Storage::Read(uint8_t ID, uint64_t Sector)`: A method that reads data from a specific sector of the storage identified by the given ID.
+- 
+- `Storage::Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer)`: A method that writes data to a specific sector of the storage identified by the given ID.
+- 
+- `Storage::Size(uint8_t ID)`: A method that returns the size of the storage identified by the given ID.
+
+
+# Datacenter.dll
 

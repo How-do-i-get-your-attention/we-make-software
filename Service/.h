@@ -28,12 +28,14 @@
 #include <comutil.h>
 #include <bitset>
 #include <variant>
+#include <bcrypt.h>
 #pragma comment(lib, "comsuppw.lib")
 #pragma comment(lib, "Ole32.lib")
 #pragma comment(lib, "OleAut32.lib")
 #pragma comment(lib, "iphlpapi.lib")
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "secur32.lib")
-#pragma warning(disable : 6387 4551 6001 6031 26495 4018 28193 4251 4005)
+#pragma comment(lib, "Bcrypt.lib")
+#pragma warning(disable : 6387 4551 6001 6031 26495 4018 28193 4251 4005 4244 4267)
 #define TRY_CATCH_ERROR try {
 #define END_TRY_CATCH } catch (const std::runtime_error& e) { if (IsDebuggerPresent()) { std::cerr << "Error: " << e.what() << std::endl; } }
