@@ -48,11 +48,9 @@ void handleTCP(std::shared_ptr<SOCKET> sock, int port, std::wstring name, TCPFun
 			delete ptr;
 			}); *ClientSocket != INVALID_SOCKET)
 			std::thread(tCPFunction, ClientSocket, port).detach();
-
 	}
 }
 void Reader(std::shared_ptr<SOCKET> sock, Network::Protocol protocol, int port, std::wstring name) {
-
 	switch (protocol)
 	{
 	case Network::UDP:

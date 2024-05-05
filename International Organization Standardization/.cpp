@@ -1,6 +1,6 @@
 #define StartDLL
 #define InternationaOrganizationStandardizationlApplicationProgrammingInterface
-#include "../Storage/.h"
+#include "../Datacenter/.h"
 
 
 std::vector<International::Organization::Standardization::Language::Data>::iterator International::Organization::Standardization::Language::Get(std::string Alpha) {
@@ -47,12 +47,14 @@ std::vector<International::Organization::Standardization::Server::Data>::iterato
 	}
 	return International::Organization::Standardization::Servers.end();
 }
+
 void Main() {
 	using namespace International::Organization::Standardization;
 	// Server name always needs to be in lowercase
-	// Server name can't be more than 255 in length
+	// Server name need be 7 in length and it need to be ASICII
 	// Max size of bin file is 17592185978880
-	// Files should be indexed starting from 0
+	// Files should be indexed starting from 0 and max 255
+	// Do not create the file manually; the system will handle file creation automatically.
 	Servers = {
 		{ "b873ee7",{212,227,201,38},{32, 1, 8, 216, 24, 1, 128, 56, 0, 0, 0, 0, 0, 0, 0, 1},{
 			{L"D:\\Quality Time.bin",0,3000000000000}
@@ -74,6 +76,8 @@ void Main() {
 	CountriesOrCountryAndStates = {
 		{ "dk",Company::Get(L"dk.how-do-i-get-your-attention.com"), Language::Get("da") , {Regulation::Get(L"Danish legislation"), Regulation::Get(L"General Data Protection Regulation")}}
 	};
-	System::Libraries::WaitForModules({ L"Storage.dll" }, System::Started);
-	Storage::Mount();
+	if (System::Libraries::If(L"Storage.dll", System::Started))
+		Storage::Mount();
+	if (System::Libraries::If(L"Datacenter.dll", System::Started))
+		Datacenter::Mount();
 }

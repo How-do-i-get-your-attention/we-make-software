@@ -34,6 +34,7 @@ namespace System {
         SystemApplicationProgrammingInterface std::vector<std::pair<std::wstring, HMODULE>> Modules;
         SystemApplicationProgrammingInterface HMODULE Get(std::wstring);
         SystemApplicationProgrammingInterface bool Wait(std::wstring, System::Status);
+        SystemApplicationProgrammingInterface bool If(std::wstring, System::Status);
         SystemApplicationProgrammingInterface bool WaitForModules(std::initializer_list<std::wstring>, System::Status);
         SystemApplicationProgrammingInterface bool WaitForModule(std::wstring);
         SystemApplicationProgrammingInterface bool WaitForModules(std::initializer_list<std::wstring>);

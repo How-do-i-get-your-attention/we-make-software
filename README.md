@@ -299,6 +299,8 @@ The `System::Libraries::Restart` method is used to restart all DLLs. It first st
 
 The `System::Libraries::Wait` function waits until a DLL reaches a certain status. It keeps checking the status of the DLL in a loop until the DLL reaches the desired status.
 
+The `System::Libraries::If` function waits until a DLL return true or false depend of status
+
 The `System::Libraries::WaitForModule` function waits until a specific DLL is loaded. It keeps checking in a loop until the DLL is found in the list of loaded modules.
 
 The `System::Libraries::WaitForModules` function waits until all DLLs in a list are loaded. It keeps checking in a loop until all DLLs are found in the list of loaded modules.
@@ -322,7 +324,7 @@ The `System::Name` is a global variable that can be used to store the name of th
 
 # International Organization Standardization.dll
 
-> ../Storage/.h
+> ../Datacenter/.h
 
 This C++ code is part of the International Organization for Standardization (ISO) application programming interface (API). It provides a structured way to handle international standardization data, including languages, regulations, and countries or states.
 

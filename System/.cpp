@@ -134,6 +134,15 @@ void System::Libraries::Update(std::wstring name)
         FreeLibrary(hModule);
     }
 }
+bool System::Libraries::If(std::wstring name, System::Status status)
+{
+    if (auto get = Get(name)) {
+        if (System::Status* FileStatus = (System::Status*)GetProcAddress(get, "Status");  *FileStatus == status)
+            return  true;
+        return false;
+    }
+    return false;
+}
 bool System::Libraries::Wait(std::wstring name, System::Status status)
 {
     while (auto get = Get(name)) {
