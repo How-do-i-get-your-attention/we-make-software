@@ -10,6 +10,7 @@ namespace  International{
 	namespace  Organization {
 		namespace Standardization
 		{
+			InternationaOrganizationStandardizationlApplicationProgrammingInterface std::vector<std::string> Domains;
 			namespace Server {
 				namespace  Storage {
 					struct Data

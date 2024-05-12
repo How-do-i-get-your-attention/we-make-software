@@ -16,7 +16,7 @@ void Exit(){
 }
 std::wstring GenerateWindowsFirewallName(Firewall::Protocol protocol, int Port)
 {
-    static const wchar_t* protocolNames[] = { L"UDP", L"TCP", L"Both" };
+    static const wchar_t* protocolNames[] = { L"UDP", L"TCP" };
     std::wstringstream ss;
     ss << L"we-make-software[" << protocolNames[protocol] << L"][" << Port << L"]";
     return ss.str();

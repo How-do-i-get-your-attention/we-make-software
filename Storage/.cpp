@@ -1,43 +1,38 @@
 #define StartDLL
 #define StopDLL
 #define StoargeApplicationProgrammingInterface
+#define PrivateStoargeApplicationProgrammingInterface
 #include ".h"
 #include <ntstatus.h>
-
 std::vector<std::tuple<uint8_t, HANDLE, std::unique_ptr<std::mutex>>> _Files;
 std::vector<unsigned char>_Read(uint8_t ID, uint64_t Sector) {
 	using namespace Storage;
 	if (auto it = std::find_if(_Files.begin(), _Files.end(), [&ID](auto& file) {return std::get<0>(file) == ID; }); it != _Files.end()) {
 		LARGE_INTEGER fileSize;
 		GetFileSizeEx(std::get<1>(*it), &fileSize);
-		if (Sector * 512 < fileSize.QuadPart) {
-			std::vector<unsigned char> buffer(512, 0);
+		if (Sector * 1024 < fileSize.QuadPart) {
+			std::vector<unsigned char> buffer(1024, 0);
 			OVERLAPPED overlapped = { 0 };
-			uint64_t offset = Sector * 512;
+			uint64_t offset = Sector * 1024;
 			overlapped.Offset = offset & 0xFFFFFFFF;
 			overlapped.OffsetHigh = offset >> 32; 
 			std::lock_guard<std::mutex> lock(*std::get<2>(*it));
-			if (!ReadFile(std::get<1>(*it), buffer.data(), 512, nullptr, &overlapped))
-				return std::vector<unsigned char>();
-			return buffer;
+			if (ReadFile(std::get<1>(*it), buffer.data(), 1024, nullptr, &overlapped))
+				return buffer;
 		}
 	}
-
 	return std::vector<unsigned char>();
 }
 bool _Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer) {
-	std::cout << "Mai0 \n";
 	using namespace Storage;
-	if (auto it = std::find_if(_Files.begin(), _Files.end(), [&ID](auto& file) {return std::get<0>(file) == ID; }); it != _Files.end() && buffer.size() == 512) {
+	if (auto it = std::find_if(_Files.begin(), _Files.end(), [&ID](auto& file) {return std::get<0>(file) == ID; }); it != _Files.end() && buffer.size() == 1024) {
 		OVERLAPPED overlapped = { 0 };
-		uint64_t offset = Sector * 512;
+		uint64_t offset = Sector * 1024;
 		overlapped.Offset = offset & 0xFFFFFFFF;
 		overlapped.OffsetHigh = offset >> 32;
 		std::lock_guard<std::mutex> lock(*std::get<2>(*it));
-		if (!WriteFile(std::get<1>(*it), buffer.data(), 512, nullptr, &overlapped))
-			return false;
-		FlushFileBuffers(std::get<1>(*it));
-		return true;
+		if (WriteFile(std::get<1>(*it), buffer.data(), 1024, nullptr, &overlapped))
+			return  FlushFileBuffers(std::get<1>(*it));
 	}
 	return false;
 }
@@ -86,15 +81,12 @@ void Storage::Mount() {
 				_Files.push_back(std::make_tuple(storage.ID, CreateFile2(
 					storage.Address.c_str(),
 					GENERIC_READ | GENERIC_WRITE,
-					FILE_SHARE_READ | FILE_SHARE_WRITE,
+					0,
 					OPEN_ALWAYS,
 					&extendedParams
 				), std::make_unique<std::mutex>()));
-				auto size = _Size(storage.ID);
-				if (!std::get<0>(size)) {
-					_Write(storage.ID, 0, std::vector<unsigned char>(512, 0));// Sector system
-					_Write(storage.ID, 1, std::vector<unsigned char>(512, 0));// Master
-				}
+				if (auto size = _Size(storage.ID); !std::get<0>(size))
+					_Write(storage.ID, 0, std::vector<unsigned char>(1024, 0));
 			}
 			break;
 		}
@@ -103,14 +95,14 @@ void Storage::Mount() {
 void Main() {
 	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
 	Storage::Mount();
-	Sleep(5000);
-	auto x=	Storage::Sector::Get();
+	Network::Add(Network::TCP, 1025, 1400, L"Storage.dll");
+	//auto x=	Storage::Sector::Get();
 
-	for (unsigned char byte : x) {
-		std::bitset<8> binary(byte); // convert byte to binary
-		std::cout << binary << ' '; 
-	}
-	Storage::Sector::Delete(x);
+	//for (unsigned char byte : x) {
+	//	std::bitset<8> binary(byte); // convert byte to binary
+	//	std::cout << binary << ' '; 
+	//}
+	//Storage::Sector::Delete(x);
 }
 std::vector<unsigned char> _CreateLocalSectorAddress(uint8_t id,uint64_t sector) {
 	std::vector<unsigned char> buffer(16, 0);
@@ -119,7 +111,7 @@ std::vector<unsigned char> _CreateLocalSectorAddress(uint8_t id,uint64_t sector)
 	std::memcpy(&buffer[8], &sector, 8);
 	return buffer;
 }
-std::vector<unsigned char>  Storage::Sector::Get()
+std::vector<unsigned char>  Storage::Sector::New()
 {
 	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
 	for (auto& server : International::Organization::Standardization::Servers)
@@ -133,7 +125,7 @@ std::vector<unsigned char>  Storage::Sector::Get()
 							std::vector< uint64_t> sectors;
 							{
 								auto buffer = _Read(storage.ID, sector);
-								for (int i = 0; i < 64; i++)
+								for (int i = 0; i < 128; i++)
 								{
 									uint64_t value = 0;
 									std::memcpy(&value, buffer.data() + (i * 8), 8);
@@ -142,19 +134,17 @@ std::vector<unsigned char>  Storage::Sector::Get()
 									else break;
 								}
 							}
-							if (sectors.empty()) {
-								auto _size = _Size(storage.ID);
-								if (std::get<0>(_size) < std::get<1>(_size)) {
-									uint16_t sector = (std::get<0>(_size) /512);
-									_Write(storage.ID, sector, std::vector<unsigned char>(512, 0));
+							if (sectors.empty()) 
+								if (auto _size = _Size(storage.ID); std::get<0>(_size) < std::get<1>(_size)) {
+									uint16_t sector = (std::get<0>(_size) / 1024);
+									_Write(storage.ID, sector, std::vector<unsigned char>(1024, 0));
 									return _CreateLocalSectorAddress(storage.ID, sector);
 								}
-							}
-							auto ConfirmBufferEmpty = _Read(storage.ID, sectors.back());
-							if (std::all_of(ConfirmBufferEmpty.begin(), ConfirmBufferEmpty.end(), [](unsigned char c) { return c == 0; })) {
+					
+							if (auto ConfirmBufferEmpty = _Read(storage.ID, sectors.back());  std::all_of(ConfirmBufferEmpty.begin(), ConfirmBufferEmpty.end(), [](unsigned char c) { return c == 0; })) {
 								uint64_t useSector = sectors.back();
 								sectors.pop_back();
-								auto buffer = std::vector<unsigned char>(512, 0);
+								auto buffer = std::vector<unsigned char>(1024, 0);
 								std::memcpy(buffer.data(), sectors.data(), sectors.size() * 8);
 								_Write(storage.ID, sector, buffer);
 								return _CreateLocalSectorAddress(storage.ID, useSector);
@@ -164,42 +154,80 @@ std::vector<unsigned char>  Storage::Sector::Get()
 					}
      return std::vector<unsigned char>();
 }
-
-void Storage::Sector::Delete(std::vector<unsigned char> buffer) {
-	if (buffer.size() == 16)
-	{
-		if (std::string(buffer.begin(), buffer.begin() + 7) != System::Name) return;
-		uint8_t bufferid = buffer[7];
-		uint64_t buffersector = 0;
-		std::memcpy(&buffersector, &buffer[8], 8);
-		if (auto it = std::find_if(_Files.begin(), _Files.end(), [&bufferid](auto& file) {return std::get<0>(file) == bufferid; }); it != _Files.end()) {
-			uint64_t sector = 0;
-			while (true)
-			{
-				std::vector<uint64_t> sectors;
-				{
-					auto buffer = _Read(bufferid, sector);
-					for (int i = 0; i < 64; i++)
-					{
-						uint64_t value = 0;
-						std::memcpy(&value, buffer.data() + (i * 8), 8);
-						if (value)
-							sectors.push_back(value);
-						else break;
+bool Storage::Sector::Delete(std::vector<unsigned char> sector)
+{
+	if (std::vector<unsigned char>(sector.begin(), sector.begin() + 7) != std::vector<unsigned char>(System::Name.begin(), System::Name.end()))
+		return false;
+	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
+	for (auto& server : International::Organization::Standardization::Servers)
+		if (server.Name == System::Name)
+			for (auto& storage : server.Storages)
+				if (storage.Space != 0)
+					if (auto it = std::find_if(_Files.begin(), _Files.end(), [&storage](auto& file) {return std::get<0>(file) == storage.ID; }); it != _Files.end()) {
+						uint64_t sectorValue = 0;
+						std::memcpy(&sectorValue, sector.data() + 8, 8);
+						std::vector<uint64_t> sectors;
+						{
+							auto buffer = _Read(storage.ID, sectorValue);
+							for (int i = 0; i < 128; i++)
+							{
+								uint64_t value = 0;
+								std::memcpy(&value, buffer.data() + (i * 8), 8);
+								if (value)
+									sectors.push_back(value);
+								else break;
+							}
+						}
+						if (sectors.empty())
+							return false;
+						sectors.push_back(0);
+						auto buffer = std::vector<unsigned char>(1024, 0);
+						std::memcpy(buffer.data(), sectors.data(), sectors.size() * 8);
+						return _Write(storage.ID, sectorValue, buffer);
 					}
-				}
-				if(sectors.size()==64)
-					sector = sectors.back();
-				else
-				{
-					auto buffer = std::vector<unsigned char>(512, 0);
-					_Write(bufferid, buffersector, buffer);
-					sectors.push_back(buffersector);
-					std::memcpy(buffer.data(), sectors.data(), sectors.size() * 8);
-					_Write(bufferid, sector, buffer);
-					break;
-				}
-			}
+	return false;
+}
+bool Storage::Sector::Write(std::vector<unsigned char> sector, std::vector<unsigned char> data) {
+	if (data.size() != 1024|| std::vector<unsigned char>(sector.begin(), sector.begin() + 7) != std::vector<unsigned char>(System::Name.begin(), System::Name.end()))  return false;
+	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
+	for (auto& server : International::Organization::Standardization::Servers)
+		if (server.Name == System::Name)
+			for (auto& storage : server.Storages)
+				if (storage.Space != 0)
+					if (auto it = std::find_if(_Files.begin(), _Files.end(), [&sector](auto& file) {return std::get<0>(file) == sector[7]; }); it != _Files.end()) {
+						uint64_t sectorValue = 0;
+						std::memcpy(&sectorValue, sector.data() + 8, 8);
+						return _Write(storage.ID, sectorValue, data);
+					}
+	return false;
+}
+std::vector<unsigned char> Storage::Sector::Read(std::vector<unsigned char> sector)
+{
+	if (std::vector<unsigned char>(sector.begin(), sector.begin() + 7) != std::vector<unsigned char>(System::Name.begin(), System::Name.end())) 
+		return std::vector<unsigned char>();
+
+	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
+	for (auto& server : International::Organization::Standardization::Servers)
+		if (server.Name == System::Name)
+			for (auto& storage : server.Storages)
+				if (storage.Space != 0)
+					if (auto it = std::find_if(_Files.begin(), _Files.end(), [&sector](auto& file) {return std::get<0>(file) == sector[7]; }); it != _Files.end()) {
+						uint64_t sectorValue = 0;
+						std::memcpy(&sectorValue, sector.data() + 8, 8);
+						return _Read(storage.ID, sectorValue);
+					}
+	return std::vector<unsigned char>();
+}
+
+
+
+extern "C" _declspec(dllexport)void TCP(std::shared_ptr<SOCKET> socket, int port) {
+	if (port == 1025) {
+
+
+		// TODO: Add SSL check here later
+		while (socket && *socket != INVALID_SOCKET) {
+		
 		}
 	}
 }

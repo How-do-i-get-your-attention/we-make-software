@@ -463,13 +463,15 @@ The commented-out NetworkUDP and NetworkTCP macros are used to define the UDP an
 
 # Storage.dll
 
-> ../Storage/.h
+> ../Network/.h
 
-The `Storage::Read(uint8_t ID, uint64_t Sector)`: This method reads data from a specific sector of the storage identified by the given ID. It returns a vector of unsigned characters representing the data read.
+The `Storage::Sector::New()`: This method creates a new sector in the storage. It returns a vector of unsigned characters representing the sector address.
 
-The `Storage::Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer)`: This method writes data to a specific sector of the storage identified by the given ID. The data to be written is provided in the form of a vector of unsigned characters. The method returns a boolean indicating whether the write operation was successful.
+The `Storage::Sector::Delete(std::vector<unsigned char> sector)`: This method deletes a specific sector from the storage. The sector to be deleted is identified by the given sector address. The method returns a boolean indicating whether the deletion was successful.
 
-The `Storage::Size(uint8_t ID)`: This method returns the size of the storage identified by the given ID. The size is returned as a tuple of two integers representing the used and total space.
+The `Storage::Sector::Write(std::vector<unsigned char> sector, std::vector<unsigned char> data)`: This method writes data to a specific sector in the storage. The sector is identified by the given sector address. The data to be written is provided in the form of a vector of unsigned characters. The method returns a boolean indicating whether the write operation was successful.
+
+The `Storage::Sector::Read(std::vector<unsigned char> sector)`: This method reads data from a specific sector in the storage. The sector is identified by the given sector address. It returns a vector of unsigned characters representing the data read.
 
 The `Exit()`: This method closes all open files and clears the list of files.
 
@@ -479,15 +481,18 @@ The `Storage::Mount()`: This method mounts the storage. It opens a file for each
 
 The `Storage` namespace contains the following:
 
-The `Storage::Mount()`: A method used to mount the storage.
+The `Storage::Mount()`: A method used to mount the storage. This method is only available when the `PrivateStoargeApplicationProgrammingInterface` macro is defined.
 
-The `Storage::Files`: A vector of tuples, where each tuple contains an ID and a handle to a file.
+The `Storage::Sector` namespace contains the following methods:
 
-The `Storage::Read(uint8_t ID, uint64_t Sector)`: A method that reads data from a specific sector of the storage identified by the given ID.
- 
-The `Storage::Write(uint8_t ID, uint64_t Sector, std::vector<unsigned char> buffer)`: A method that writes data to a specific sector of the storage identified by the given ID.
- 
-The `Storage::Size(uint8_t ID)`: A method that returns the size of the storage identified by the given ID.
+The `Storage::Sector::New()`: A method that creates a new sector in the storage. It returns a vector of unsigned characters representing the sector address.
+
+The `Storage::Sector::Delete(std::vector<unsigned char>)`: A method that deletes a specific sector from the storage. The sector to be deleted is identified by the given sector address. The method returns a boolean indicating whether the deletion was successful.
+
+The `Storage::Sector::Write(std::vector<unsigned char> sector, std::vector<unsigned char> data)`: A method that writes data to a specific sector in the storage. The sector is identified by the given sector address. The data to be written is provided in the form of a vector of unsigned characters. The method returns a boolean indicating whether the write operation was successful.
+
+The `Storage::Sector::Read(std::vector<unsigned char> sector)`: A method that reads data from a specific sector in the storage. The sector is identified by the given sector address. It returns a vector of unsigned characters representing the data read.
+
 
 
 # Datacenter.dll

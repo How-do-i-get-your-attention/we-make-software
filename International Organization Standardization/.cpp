@@ -1,5 +1,6 @@
 #define StartDLL
 #define InternationaOrganizationStandardizationlApplicationProgrammingInterface
+#define PrivateStoargeApplicationProgrammingInterface
 #include "../Datacenter/.h"
 
 
@@ -50,6 +51,7 @@ std::vector<International::Organization::Standardization::Server::Data>::iterato
 
 void Main() {
 	using namespace International::Organization::Standardization;
+	Domains = {"how-do-i-get-your-attention.com"};
 	// Server name always needs to be in lowercase
 	// Server name need be 7 in length and it need to be ASICII
 	// Max size of bin file is 17592185978880
