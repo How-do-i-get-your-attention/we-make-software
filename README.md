@@ -432,33 +432,37 @@ The Firewall::Remove function is used to remove a rule from the firewall. Simila
 
 # Network.dll
 
-> ../Network/.h
+> ../Firewall/.h
 
 This C++ source file defines the Network namespace, which includes methods for managing network connections.
 
-The Network::Add function is used to add a new network connection. It supports both UDP and TCP protocols. The function sets up the socket options, binds the socket to the specified port, and starts a new thread to handle incoming connections.
+The `Network::Add` function is used to add a new network connection. It supports both UDP and TCP protocols. The function sets up the socket options, binds the socket to the specified port, and starts a new thread to handle incoming connections.
 
-The handleUDP and handleTCP functions are used to handle UDP and TCP connections, respectively. They receive incoming data and pass it to the appropriate function, which is loaded from a DLL.
+The `handleUDP` and `handleTCP` functions are used to handle UDP and TCP connections, respectively. They receive incoming data and pass it to the appropriate function, which is loaded from a DLL.
 
-The Reader function is used to read incoming data from a connection. It checks the protocol of the connection and calls the appropriate handler function. If the connection is closed, it removes the connection from the list of active connections.
+The `Reader` function is used to read incoming data from a connection. It checks the protocol of the connection and calls the appropriate handler function. If the connection is closed, it removes the connection from the list of active connections.
 
-The Remove function is used to remove a network connection. It waits for the connection to stop, closes the socket, removes the connection from the firewall, and removes the connection from the list of active connections.
+The `Remove` function is used to remove a network connection. It waits for the connection to stop, closes the socket, removes the connection from the firewall, and removes the connection from the list of active connections.
 
-The Main function waits for the Firewall DLL to be loaded and started.
+The `GetTCPInterneProtocolAddress` function retrieves the IP address associated with a TCP socket.
 
-The Exit function stops all active connections. It waits for each connection to stop and then removes it.
+The `IsTCPServer` function checks if a given socket is a TCP server.
+
+The `Main` function waits for the Firewall DLL to be loaded and started.
+
+The `Exit` function stops all active connections. It waits for each connection to stop and then removes it.
 
 # ../Network/.h
 
-This C++ header file defines the Network namespace, which includes the Add function and the Protocol enum.
+This C++ header file defines the Network namespace, which includes the Add, `IsTCPServer`, and `GetTCPInterneProtocolAddress` functions, as well as the Protocol enum.
 
-The Network::Protocol enum is used to specify the protocol of a network connection. It can be either UDP or TCP.
+The `Network::Protocol` enum is used to specify the protocol of a network connection. It can be either UDP or TCP.
 
-The Network::Add function is used to add a new network connection. It takes four parameters: the protocol of the connection, the port number, the buffer size, and the name of the DLL that will handle the connection.
+The `Network::Add` function is used to add a new network connection. It takes four parameters: the protocol of the connection, the port number, the buffer size, and the name of the DLL that will handle the connection.
 
-The NetworkApplicationProgrammingInterface macro is used to export or import the Add function, depending on whether the NetworkApplicationProgrammingInterface symbol is defined. If the symbol is defined, the Add function is exported; otherwise, it is imported and the Network library is linked.
+The `Network::IsTCPServer` function checks if a given socket is a TCP server.
 
-The commented-out NetworkUDP and NetworkTCP macros are used to define the UDP and TCP functions, which are exported from the DLL. These functions are used to handle incoming UDP and TCP connections, respectively. The macros also call the Add function to add a new UDP or TCP connection.
+The `Network::GetTCPInterneProtocolAddress` function retrieves the IP address associated with a TCP socket.
 
 
 # Storage.dll

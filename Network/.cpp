@@ -4,6 +4,32 @@
 #include ".h"
 std::vector<std::tuple<Network::Protocol, int, std::shared_ptr<SOCKET>, std::shared_ptr<SOCKET>, std::wstring>> Connections;
 std::mutex Mutex;
+std::vector<unsigned char> Network::GetTCPInterneProtocolAddress(std::shared_ptr<SOCKET> socket) {
+	struct sockaddr_storage addr;
+	socklen_t addr_size = sizeof(struct sockaddr_storage);
+	int res = getpeername(*socket, (struct sockaddr*)&addr, &addr_size);
+	std::vector<unsigned char> ip_bytes;
+
+	if (addr.ss_family == AF_INET) {
+		struct sockaddr_in* s = (struct sockaddr_in*)&addr;
+		ip_bytes.resize(4);
+		memcpy(ip_bytes.data(), &(s->sin_addr.s_addr), 4);
+	}
+	else if (addr.ss_family == AF_INET6) {
+		struct sockaddr_in6* s = (struct sockaddr_in6*)&addr;
+		ip_bytes.resize(16);
+		memcpy(ip_bytes.data(), s->sin6_addr.s6_addr, 16);
+	}
+	return ip_bytes;
+}
+bool Network::IsTCPServer(std::shared_ptr<SOCKET> socket) {
+
+	std::vector<unsigned char> ip_bytes = GetTCPInterneProtocolAddress(socket);
+	for (auto& server : International::Organization::Standardization::Servers)
+		if ((ip_bytes.size() == 4 && server.IntenetProtocolAddressVersion4 == ip_bytes) || (ip_bytes.size() == 16 && server.IntenetProtocolAddressVersion6 == ip_bytes)) return true;
+	return false;
+}
+
 void Remove(Network::Protocol protocol, int port)
 {
 	std::lock_guard<std::mutex> lock(Mutex);

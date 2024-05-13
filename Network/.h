@@ -12,6 +12,8 @@ namespace Network {
 		UDP, TCP
 	};
 	NetworkApplicationProgrammingInterface void Add(Protocol, int, int, std::wstring);
+	NetworkApplicationProgrammingInterface bool IsTCPServer(std::shared_ptr<SOCKET>);
+	NetworkApplicationProgrammingInterface std::vector<unsigned char> GetTCPInterneProtocolAddress(std::shared_ptr<SOCKET> socket);
 }
 //#ifdef NetworkUDP
 //extern "C" _declspec(dllexport)void UDP(std::shared_ptr<SOCKET>, int, std::shared_ptr<sockaddr_storage>, std::shared_ptr<std::vector<unsigned char>>);
