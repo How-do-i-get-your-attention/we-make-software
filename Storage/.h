@@ -11,6 +11,7 @@ namespace Storage {
 	StoargeApplicationProgrammingInterface void Mount();
 #endif 
 	namespace Sector {
+		StoargeApplicationProgrammingInterface std::vector<unsigned char> CreateServerSectorAddress(std::string name, uint8_t id, uint64_t sector);
 		StoargeApplicationProgrammingInterface std::vector<unsigned char> New();
 		StoargeApplicationProgrammingInterface bool Delete(std::vector<unsigned char>);
 		StoargeApplicationProgrammingInterface bool Write(std::vector<unsigned char> sector, std::vector<unsigned char> data);

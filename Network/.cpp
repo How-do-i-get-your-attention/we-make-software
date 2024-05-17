@@ -7,7 +7,7 @@ std::mutex Mutex;
 std::vector<unsigned char> Network::GetTCPInterneProtocolAddress(std::shared_ptr<SOCKET> socket) {
 	struct sockaddr_storage addr;
 	socklen_t addr_size = sizeof(struct sockaddr_storage);
-	int res = getpeername(*socket, (struct sockaddr*)&addr, &addr_size);
+	int res = getpeername(*socket.get(), (struct sockaddr*)&addr, &addr_size);
 	std::vector<unsigned char> ip_bytes;
 
 	if (addr.ss_family == AF_INET) {
@@ -23,13 +23,11 @@ std::vector<unsigned char> Network::GetTCPInterneProtocolAddress(std::shared_ptr
 	return ip_bytes;
 }
 bool Network::IsTCPServer(std::shared_ptr<SOCKET> socket) {
-
 	std::vector<unsigned char> ip_bytes = GetTCPInterneProtocolAddress(socket);
 	for (auto& server : International::Organization::Standardization::Servers)
 		if ((ip_bytes.size() == 4 && server.IntenetProtocolAddressVersion4 == ip_bytes) || (ip_bytes.size() == 16 && server.IntenetProtocolAddressVersion6 == ip_bytes)) return true;
 	return false;
 }
-
 void Remove(Network::Protocol protocol, int port)
 {
 	std::lock_guard<std::mutex> lock(Mutex);

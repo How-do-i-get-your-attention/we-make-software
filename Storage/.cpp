@@ -2,6 +2,8 @@
 #define StopDLL
 #define StoargeApplicationProgrammingInterface
 #define PrivateStoargeApplicationProgrammingInterface
+
+
 #include ".h"
 #include <ntstatus.h>
 std::vector<std::tuple<uint8_t, HANDLE, std::unique_ptr<std::mutex>>> _Files;
@@ -95,14 +97,13 @@ void Storage::Mount() {
 void Main() {
 	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
 	Storage::Mount();
-	Network::Add(Network::TCP, 1025, 1400, L"Storage.dll");
-	//auto x=	Storage::Sector::Get();
-
-	//for (unsigned char byte : x) {
-	//	std::bitset<8> binary(byte); // convert byte to binary
-	//	std::cout << binary << ' '; 
-	//}
-	//Storage::Sector::Delete(x);
+}
+std::vector<unsigned char>  Storage::Sector::CreateServerSectorAddress(std::string name,uint8_t id, uint64_t sector) {
+	std::vector<unsigned char> buffer(16, 0);
+	std::copy(name.begin(), name.end(), buffer.begin());
+	buffer[7] = id;
+	std::memcpy(&buffer[8], &sector, 8);
+	return buffer;
 }
 std::vector<unsigned char> _CreateLocalSectorAddress(uint8_t id,uint64_t sector) {
 	std::vector<unsigned char> buffer(16, 0);
@@ -156,8 +157,6 @@ std::vector<unsigned char>  Storage::Sector::New()
 }
 bool Storage::Sector::Delete(std::vector<unsigned char> sector)
 {
-	if (std::vector<unsigned char>(sector.begin(), sector.begin() + 7) != std::vector<unsigned char>(System::Name.begin(), System::Name.end()))
-		return false;
 	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
 	for (auto& server : International::Organization::Standardization::Servers)
 		if (server.Name == System::Name)
@@ -188,7 +187,8 @@ bool Storage::Sector::Delete(std::vector<unsigned char> sector)
 	return false;
 }
 bool Storage::Sector::Write(std::vector<unsigned char> sector, std::vector<unsigned char> data) {
-	if (data.size() != 1024|| std::vector<unsigned char>(sector.begin(), sector.begin() + 7) != std::vector<unsigned char>(System::Name.begin(), System::Name.end()))  return false;
+	if (data.size() != 1024)  return false;
+
 	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
 	for (auto& server : International::Organization::Standardization::Servers)
 		if (server.Name == System::Name)
@@ -203,9 +203,6 @@ bool Storage::Sector::Write(std::vector<unsigned char> sector, std::vector<unsig
 }
 std::vector<unsigned char> Storage::Sector::Read(std::vector<unsigned char> sector)
 {
-	if (std::vector<unsigned char>(sector.begin(), sector.begin() + 7) != std::vector<unsigned char>(System::Name.begin(), System::Name.end())) 
-		return std::vector<unsigned char>();
-
 	System::Libraries::WaitForModules({ L"International Organization Standardization.dll" }, System::Started);
 	for (auto& server : International::Organization::Standardization::Servers)
 		if (server.Name == System::Name)
@@ -220,14 +217,3 @@ std::vector<unsigned char> Storage::Sector::Read(std::vector<unsigned char> sect
 }
 
 
-
-extern "C" _declspec(dllexport)void TCP(std::shared_ptr<SOCKET> socket, int port) {
-	if (port == 1025) {
-
-
-		// TODO: Add SSL check here later
-		while (socket && *socket != INVALID_SOCKET) {
-		
-		}
-	}
-}

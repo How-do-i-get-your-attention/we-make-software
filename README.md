@@ -477,6 +477,8 @@ The `Storage::Sector::Write(std::vector<unsigned char> sector, std::vector<unsig
 
 The `Storage::Sector::Read(std::vector<unsigned char> sector)`: This method reads data from a specific sector in the storage. The sector is identified by the given sector address. It returns a vector of unsigned characters representing the data read.
 
+The `Storage::Sector::Storage::CreateServerSectorAddress(std::string name,uint8_t id, uint64_t sector) `: This method create 16 bytes of data for the sector address.
+
 The `Exit()`: This method closes all open files and clears the list of files.
 
 The `Storage::Mount()`: This method mounts the storage. It opens a file for each storage in the server and adds it to the list of files.
@@ -497,7 +499,7 @@ The `Storage::Sector::Write(std::vector<unsigned char> sector, std::vector<unsig
 
 The `Storage::Sector::Read(std::vector<unsigned char> sector)`: A method that reads data from a specific sector in the storage. The sector is identified by the given sector address. It returns a vector of unsigned characters representing the data read.
 
+The `Storage::Sector::Storage::CreateServerSectorAddress(std::string name,uint8_t id, uint64_t sector) `: This method create 16 bytes of data for the sector address.
 
-
-# Datacenter.dll
-
+Too much explaining of code, right?
+I DON'T KNOW HOW TO MAKE DOCUMENTATION
